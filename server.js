@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 // Create Express server
 const app = express();
-const port = process.env.PORT || 3001; // Use environment port for Render.com compatibility
+const port = process.env.PORT || 3001;
 
 // Database path
 const dbPath = path.join(__dirname, 'database.json');
@@ -19,19 +19,37 @@ const router = jsonServer.router(dbPath);
 // Database backup path for persistence on Render's free tier
 const backupPath = path.join(__dirname, 'database-backup.json');
 
-// Configure CORS for Hostinger domain
-app.use(cors({
-  // Replace with your actual Hostinger domain
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-hostinger-domain.com', 'http://localhost:3000'] 
-    : 'http://localhost:3000',
-  credentials: true
-}));
+// CORS configuration - UPDATED FOR BETTER PREFLIGHT HANDLING
+const corsOptions = {
+  origin: ['https://admin.hamcospo.com', 'http://localhost:3000', 'http://localhost:3001'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS with options
+app.use(cors(corsOptions));
+
+// Handle OPTIONS requests explicitly
+app.options('*', cors(corsOptions));
+
+// Debug middleware to log CORS headers
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (corsOptions.origin.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
+    res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  next();
+});
 
 app.use(bodyParser.json());
 
 // JWT secret - use environment variable in production
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || '0c47b1dd9e743ad2b7e74ba72cfd6f83';
 
 // Database persistence for Render.com free tier
 // Backup database on changes
@@ -228,6 +246,7 @@ if (!fs.existsSync(dbPath)) {
 
 // Login endpoint
 app.post('/api/login', (req, res) => {
+  console.log('Login attempt for:', req.body.username);
   const { username, password } = req.body;
   
   try {
@@ -245,6 +264,8 @@ app.post('/api/login', (req, res) => {
         role: user.role
       }, JWT_SECRET, { expiresIn: '1h' });
       
+      console.log('Login successful for:', user.username);
+      
       res.json({ 
         token,
         user: {
@@ -255,6 +276,7 @@ app.post('/api/login', (req, res) => {
         }
       });
     } else {
+      console.log('Invalid credentials for:', username);
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
@@ -303,10 +325,9 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date() });
 });
 
-// Removed static file serving since frontend will be on Hostinger
-
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`API routes are available under /api`);
+  console.log(`CORS configured for: ${corsOptions.origin.join(', ')}`);
 });
