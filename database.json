@@ -1,0 +1,89 @@
+{
+  "users": [
+    {
+      "id": "admin",
+      "username": "admin",
+      "password": "admin",
+      "name": "Administrator",
+      "role": "admin"
+    },
+    {
+      "id": "usman",
+      "username": "usman",
+      "password": "password",
+      "name": "Usman Ahmed",
+      "role": "partner"
+    },
+    {
+      "id": "mark",
+      "username": "mark",
+      "password": "password",
+      "name": "Mark Jason Sanker",
+      "role": "partner"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat1",
+      "name": "Samples",
+      "description": "Product samples and prototypes"
+    },
+    {
+      "name": "Events",
+      "description": "Events",
+      "id": "NV04xXx"
+    },
+    {
+      "name": "Meetings",
+      "description": "Meetings",
+      "id": "uEhu6JL"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "e001",
+      "description": "Product Samples",
+      "amount": 500,
+      "categoryId": "cat1",
+      "paidBy": "usman",
+      "date": "2025-03-01",
+      "notes": "Initial product samples for client presentations"
+    }
+  ],
+  "investments": [],
+  "subsidies": [
+    {
+      "id": "s001",
+      "partner": "usman",
+      "amount": 1000,
+      "date": "2025-03-10",
+      "description": "Marketing campaign subsidy",
+      "notes": "Extra funding for urgent marketing needs"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t002",
+      "title": "Prepare sales presentation",
+      "description": "Create slides for new client pitch",
+      "assignedTo": "usman",
+      "status": "cancelled",
+      "priority": "medium",
+      "dueDate": "2025-03-10",
+      "createdAt": "2025-03-05",
+      "completedAt": null
+    }
+  ],
+  "events": [
+    {
+      "id": "ev001",
+      "name": "Industry Conference",
+      "description": "Annual industry conference",
+      "startDate": "2025-04-15",
+      "endDate": "2025-04-18",
+      "location": "Convention Center",
+      "status": "upcoming",
+      "notes": "Need to prepare marketing materials"
+    }
+  ]
+}
